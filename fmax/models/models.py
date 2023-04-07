@@ -72,8 +72,8 @@ class ForecastModel:
         self.init_pymc_model(self.prior_parameters)
         
     def init_pymc_model(self, prior_parameters):
-    """ Create a PyMC3 model
-    """
+        """ Create a PyMC3 model
+        """
         # Define model
         with pm.Model() as self.pymc_model:
 
