@@ -1,7 +1,7 @@
 import pymc3 as pm
 import numpy as np
 import theano.tensor as tt
-from fmax import MinGumbel, MaxWeibull
+from fmax import MinGumbel, MaxWeibull, Frechet
 
 
 def get_loglikelihood_fn(
@@ -38,7 +38,7 @@ def get_loglikelihood_fn(
         
     elif attempts == "frechet":
 
-        generic_x_dist = Frechet
+        generic_x_dist = Frechet.dist
 
         def _logp(jump_data, flat_data, alpha, scale):
             """Likelihood function"""
