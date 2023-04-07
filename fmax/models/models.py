@@ -74,60 +74,59 @@ class ForecastModel:
     def init_pymc_model(self, prior_parameters):
     """ Create a PyMC3 model
     """
+        # Define model
+        with pm.Model() as self.pymc_model:
 
-    # Define model
-    with pm.Model() as self.pymc_model:
+            # Initialize priors for the distribution of each attempt
+            if self.attempt_distribution != "frechet":
+                attempts_mean_mu = prior_parameters['mu']['mean']
+                attempts_mean_sigma = prior_parameters['mu']['std']
+                attempts_stdev_lam = prior_parameters['sigma']['lam']
 
-        # Initialize priors for the distribution of each attempt
-        if self.attempt_distribution != "frechet":
-            attempts_mean_mu = prior_parameters['mu']['mean']
-            attempts_mean_sigma = prior_parameters['mu']['std']
-            attempts_stdev_lam = prior_parameters['sigma']['lam']
+                priors = {
+                  'mu': pm.Normal('mu', mu=attempts_mean_mu, sigma=attempts_mean_sigma),
+                  'sigma': pm.Exponential('sigma', lam=attempts_stdev_lam),
+                }
+            else:
+                alpha_lower = prior_parameters['alpha']['lower']
+                alpha_upper = prior_parameters['alpha']['upper']
+                scale_mean = prior_parameters['scale']['mean']
+                scale_std = prior_parameters['scale']['std']
 
-            priors = {
-              'mu': pm.Normal('mu', mu=attempts_mean_mu, sigma=attempts_mean_sigma),
-              'sigma': pm.Exponential('sigma', lam=attempts_stdev_lam),
-            }
-        else:
-            alpha_lower = prior_parameters['alpha']['lower']
-            alpha_upper = prior_parameters['alpha']['upper']
-            scale_mean = prior_parameters['scale']['mean']
-            scale_std = prior_parameters['scale']['std']
+                priors = {
+                    'alpha': pm.Uniform('alpha', lower=alpha_lower, upper=alpha_upper),
+                    'scale': pm.Normal('scale', mu=scale_mean, sigma=scale_std),
+                }
 
-            priors = {
-                'alpha': pm.Uniform('alpha', lower=alpha_lower, upper=alpha_upper),
-                'scale': pm.Normal('scale', mu=scale_mean, sigma=scale_std),
-            }
+            # Get random sampling and likelihood for the kind of attempt
+            loglike = fm.get_loglikelihood_fn(
+                          attempts=self.attempt_distribution,
+                          kind=self.kind,
+                          )
 
-        # Get random sampling and likelihood for the kind of attempt
-        loglike = fm.get_loglikelihood_fn(
-                      attempts=self.attempt_distribution,
-                      kind=self.kind,
-                      )
+            # Create switch variable between posterior predictive and forecasting
+            # 0 is posterior predictive, 1 is forecasting
+            random_switch = pm.Data('random_switch', 0.0)
 
-        # Create switch variable between posterior predictive and forecasting
-        # 0 is posterior predictive, 1 is forecasting
-        random_switch = pm.Data('random_switch', 0.0)
+            # Random sampler
+            posterior_predictive_sampler = fm.get_random_fn(
+                                 attempts=self.attempt_distribution,
+                                 kind=self.kind,
+                                 n_periods=self.fcast_len,
+                                 past_obs=self.train_data,
+                                 )
 
-        # Random sampler
-        posterior_predictive_sampler = fm.get_random_fn(
-                             attempts=self.attempt_distribution,
-                             kind=self.kind,
-                             n_periods=self.fcast_len,
-                             past_obs=self.train_data,
-                             )
+            likelihood = pm.DensityDist('path',
+                                        loglike, random=posterior_predictive_sampler,
+                                        observed={'jump_data': self.jump_data,
+                                                  'flat_data': self.flat_data,
+                                                  **priors}
+                                        )
 
-        likelihood = pm.DensityDist('path',
-                                    loglike, random=posterior_predictive_sampler,
-                                    observed={'jump_data': self.jump_data,
-                                              'flat_data': self.flat_data,
-                                              **priors}
-                                    )
-
-        # Track the log likelihood on the holdout set if available
-        if self.fcast_test_data is not None:
-            holdout_jump_data, holdout_flat_data = fm.jump_flat_split(self.fcast_test_data, kind=self.kind)
-            log_like_holdout = pm.Deterministic("log_like_holdout", loglike(holdout_jump_data, holdout_flat_data, **priors))
+            # Track the log likelihood on the holdout set if available
+            if self.fcast_test_data is not None:
+                holdout_jump_data, holdout_flat_data = fm.jump_flat_split(self.fcast_test_data, kind=self.kind)
+                log_like_holdout = pm.Deterministic("log_like_holdout", loglike(holdout_jump_data, holdout_flat_data, **priors))
 
     def fit(self, 
         chains=2, 
