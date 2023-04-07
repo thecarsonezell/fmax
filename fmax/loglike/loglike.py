@@ -35,6 +35,28 @@ def get_loglikelihood_fn(
             else: raise ValueError("`kind` must be 'max' or 'min'")
             
             return log_likelihood
+        
+    elif attempts == "frechet":
+
+        generic_x_dist = Frechet
+
+        def _logp(jump_data, flat_data, alpha, scale):
+            """Likelihood function"""
+            # Instantiate the underlying distribution
+            x_dist = generic_x_dist(alpha=alpha, scale=scale)
+
+            # Add likelihood contribution from the jump data
+            log_likelihood = pm.math.sum(x_dist.logp(jump_data))
+
+            # Add likelihood contribution from the flat data
+            if kind == "max":
+                log_likelihood += pm.math.sum(x_dist.logcdf(flat_data))
+            elif kind == "min":
+                log_likelihood += pm.math.sum(log1mexp(-x_dist.logcdf(-flat_data)))
+            else:
+                raise ValueError("`kind` must be 'max' or 'min'")
+
+            return log_likelihood
 
 
     elif attempts == "gumbel":
