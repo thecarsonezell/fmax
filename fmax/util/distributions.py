@@ -30,9 +30,11 @@ class MaxWeibull(pm.Continuous):
     return -(-y)**self.alpha
   
 class Frechet(pm.Continuous):
-  def __init__(self, alpha, scale):
+  def __init__(self, alpha, scale, *args, **kwargs):
+    super().__init__(*args, **kwargs)
     self.alpha = alpha
     self.scale = scale
+
 
   def logp(self, x):
     scaled_x = x / self.scale
