@@ -30,19 +30,24 @@ class MaxWeibull(pm.Continuous):
     return -(-y)**self.alpha
   
 class Frechet(pm.Continuous):
-  def __init__(self, alpha, scale, *args, **kwargs):
-    super().__init__(*args, **kwargs)
-    self.alpha = alpha
-    self.scale = scale
+    def __init__(self, alpha, scale, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.alpha = alpha
+        self.scale = scale
 
+    def logp(self, x):
+        # Add a condition to handle x <= 0
+        x = pm.math.switch(pm.math.gt(x, 0), x, 1e-12)
 
-  def logp(self, x):
-    scaled_x = x / self.scale
-    logp = pm.math.log(self.alpha) - pm.math.log(self.scale) - (self.alpha + 1) * pm.math.log(scaled_x) - (scaled_x ** -self.alpha)
-    return pm.math.where(scaled_x > 0, logp, -np.inf)
+        scaled_x = x / self.scale
+        logp = pm.math.log(self.alpha) - pm.math.log(self.scale) - (self.alpha + 1) * pm.math.log(scaled_x) - (scaled_x ** -self.alpha)
+        return pm.math.switch(pm.math.gt(scaled_x, 0), logp, -np.inf)
 
+    def logcdf(self, x):
+        # Add a condition to handle x <= 0
+        x = pm.math.switch(pm.math.gt(x, 0), x, 1e-12)
 
-  def logcdf(self, x):
-    scaled_x = x / self.scale
-    logcdf = - (scaled_x ** -self.alpha)
-    return logcdf
+        scaled_x = x / self.scale
+        logcdf = - (scaled_x ** -self.alpha)
+        return logcdf
+
