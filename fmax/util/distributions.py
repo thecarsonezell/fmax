@@ -1,5 +1,5 @@
 import pymc3 as pm
-
+import numpy as np
 
 class MinGumbel(pm.Continuous):
   def __init__(self, mu, beta):
