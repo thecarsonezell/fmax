@@ -92,11 +92,13 @@ class ForecastModel:
                 alpha_upper = prior_parameters['alpha']['upper']
                 scale_mean = prior_parameters['scale']['mean']
                 scale_std = prior_parameters['scale']['std']
-
+                
                 priors = {
-                    'alpha': pm.Uniform('alpha', lower=alpha_lower, upper=alpha_upper),
-                    'scale': pm.Normal('scale', mu=scale_mean, sigma=scale_std),
+                    'alpha': pm.Gamma('alpha', alpha=2, beta=1/(alpha_upper-alpha_lower)),
+                    'scale': pm.Deterministic('scale', scale_mean + pm.HalfCauchy('scale_half_cauchy', beta=scale_std)),
                 }
+
+
 
             # Get random sampling and likelihood for the kind of attempt
             loglike = fm.get_loglikelihood_fn(
