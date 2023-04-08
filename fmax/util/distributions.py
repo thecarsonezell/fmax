@@ -39,7 +39,8 @@ class Frechet(pm.Continuous):
   def logp(self, x):
     scaled_x = x / self.scale
     logp = pm.math.log(self.alpha) - pm.math.log(self.scale) - (self.alpha + 1) * pm.math.log(scaled_x) - (scaled_x ** -self.alpha)
-    return logp
+    return pm.math.switch(pm.math.gt(scaled_x, 0), logp, -np.inf)
+
 
   def logcdf(self, x):
     scaled_x = x / self.scale
