@@ -88,12 +88,13 @@ class ForecastModel:
                   'sigma': pm.Exponential('sigma', lam=attempts_stdev_lam),
                 }
             else:
+                alpha_lower = prior_parameters['alpha']['lower']
+                alpha_upper = prior_parameters['alpha']['upper']
                 scale_mean = prior_parameters['scale']['mean']
                 scale_std = prior_parameters['scale']['std']
-                attempts_stdev_lam = prior_parameters['alpha']['lam']
                 
                 priors = {
-                    'alpha': pm.HalfNormal('sigma', sigma=attempts_stdev_lam),
+                    'alpha': pm.Uniform('alpha', lower=alpha_lower, upper=alpha_upper),
                     'scale': pm.Normal('scale', mu=scale_mean, sigma=scale_std),
                 }
 
