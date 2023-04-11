@@ -93,7 +93,7 @@ class ForecastModel:
                 attempts_stdev_lam = prior_parameters['alpha']['lam']
                 
                 priors = {
-                    'alpha': pm.Exponential('sigma', lam=attempts_stdev_lam),
+                    'alpha': pm.HalfNormal('sigma', sigma=attempts_stdev_lam),
                     'scale': pm.Normal('scale', mu=scale_mean, sigma=scale_std),
                 }
 
