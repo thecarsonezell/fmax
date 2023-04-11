@@ -1,7 +1,7 @@
 import numpy as np
 import pymc3 as pm
 
-from scipy.stats import weibull_min, weibull_max, gumbel_l, gumbel_r, gen_extreme
+from scipy.stats import weibull_min, weibull_max, gumbel_l, gumbel_r, genextreme
 
 
 def get_random_fn(
