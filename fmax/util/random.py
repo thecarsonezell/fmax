@@ -1,7 +1,7 @@
 import numpy as np
 import pymc3 as pm
 
-from scipy.stats import weibull_min, weibull_max, gumbel_l, gumbel_r, frechet_l, frechet_r
+from scipy.stats import weibull_min, weibull_max, gumbel_l, gumbel_r, gen_extreme
 
 
 def get_random_fn(
@@ -36,12 +36,12 @@ def get_random_fn(
           attempts = mu + sigma*np.random.randn(n_periods)
             
       elif attempts == 'frechet':
-        alpha, scale = point['alpha'], point['scale']
-        if kind == "min":
-            scipy_dist = frechet_l(alpha, loc=0, scale=scale)
-        else:
-            scipy_dist = frechet_r(alpha, loc=0, scale=scale)
-        attempts = scipy_dist.rvs(size=n_periods)
+          alpha, scale = point['alpha'], point['scale']
+          if kind == "min":
+              scipy_dist = genextreme(-alpha, loc=0, scale=scale)
+          else:
+              scipy_dist = genextreme(alpha, loc=0, scale=scale)
+          attempts = scipy_dist.rvs(size=n_periods)
       
       elif attempts == 'gumbel':
         if kind == "min":
