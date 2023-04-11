@@ -94,7 +94,7 @@ class ForecastModel:
                 
                 priors = {
                     'alpha': pm.Exponential('sigma', lam=attempts_stdev_lam),
-                    'scale': pm.LogNormal('scale', mu=scale_mean, sigma=scale_std),
+                    'scale': pm.Normal('scale', mu=scale_mean, sigma=scale_std),
                 }
 
 
