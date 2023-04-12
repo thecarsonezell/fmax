@@ -93,16 +93,9 @@ class ForecastModel:
                 scale_mean = prior_parameters['scale']['mean']
                 scale_std = prior_parameters['scale']['std']
 
-                # Log-transform reparameterization
-                log_alpha = pm.Uniform('log_alpha', lower=np.log(alpha_lower), upper=np.log(alpha_upper))
-                log_scale = pm.Normal('log_scale', mu=scale_mean, sigma=scale_std)
-
-                alpha = pm.Deterministic('alpha', pm.math.exp(log_alpha))
-                scale = pm.Deterministic('scale', pm.math.exp(log_scale))
-
                 priors = {
-                    'alpha': alpha,
-                    'scale': scale,
+                    'alpha': pm.Uniform('alpha', lower=alpha_lower, upper=alpha_upper),
+                    'scale': pm.Normal('scale', mu=scale_mean, sigma=scale_std),
                 }
 
             # Get random sampling and likelihood for the kind of attempt
