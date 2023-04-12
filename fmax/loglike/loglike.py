@@ -38,12 +38,10 @@ def get_loglikelihood_fn(
         
     elif attempts == "frechet":
 
-        generic_x_dist = Frechet.dist
+        generic_x_dist = Frechet
 
-        def _logp(jump_data, flat_data, alpha, scale):
-            """Likelihood function"""
-            # Instantiate the underlying distribution
-            x_dist = generic_x_dist(alpha=alpha, scale=scale)
+        def _logp(jump_data, flat_data, alpha, sigma):
+            x_dist = generic_x_dist(alpha=alpha, sigma=sigma)
 
             # Add likelihood contribution from the jump data
             log_likelihood = pm.math.sum(x_dist.logp(jump_data))
