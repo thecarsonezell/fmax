@@ -92,10 +92,12 @@ class ForecastModel:
                 alpha_upper = prior_parameters['alpha']['upper']
                 scale_mean = prior_parameters['scale']['mean']
                 scale_std = prior_parameters['scale']['std']
+                scale_nu = prior_parameters['scale']['nu']
+                
 
                 priors = {
                     'alpha': pm.Uniform('alpha', lower=alpha_lower, upper=alpha_upper),
-                    'scale': pm.Normal('scale', mu=scale_mean, sigma=scale_std),
+                    'scale': pm.StudentT('scale', mu=scale_mean, sigma=scale_std, nu=scale_nu),
                 }
 
             # Get random sampling and likelihood for the kind of attempt
