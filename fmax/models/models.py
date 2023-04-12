@@ -94,8 +94,8 @@ class ForecastModel:
                 sigma_std = prior_parameters['sigma']['std']
                 
                 priors = {
-                    'alpha' = pm.Uniform('alpha', lower=alpha_lower, upper=alpha_upper),
-                    'sigma' = pm.Normal('sigma', mu=sigma_mean, sigma=sigma_std),
+                    'alpha': pm.Uniform('alpha', lower=alpha_lower, upper=alpha_upper),
+                    'sigma': pm.Normal('sigma', mu=sigma_mean, sigma=sigma_std),
                
                 }
             
