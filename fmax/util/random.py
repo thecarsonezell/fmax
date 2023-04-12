@@ -36,12 +36,9 @@ def get_random_fn(
           attempts = mu + sigma*np.random.randn(n_periods)
             
       elif attempts == 'frechet':
-          alpha, scale = point['alpha'], point['scale']
-          if kind == "min":
-              scipy_dist = genextreme(-alpha, loc=0, scale=scale)
-          else:
-              scipy_dist = genextreme(alpha, loc=0, scale=scale)
-          attempts = scipy_dist.rvs(size=n_periods)
+        alpha, beta = point['alpha'], point['beta']
+        scipy_dist = frechet(alpha, beta)
+        attempts = scipy_dist.rvs(size=n_periods)
       
       elif attempts == 'gumbel':
         if kind == "min":
