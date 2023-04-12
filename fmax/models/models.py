@@ -88,11 +88,11 @@ class ForecastModel:
                 }
             else:
                 alpha_lam = prior_parameters['alpha']['lam']
-                scale_lam = prior_parameters['sigma']['lam']
+                sigma_lam = prior_parameters['sigma']['lam']
 
                 priors = {
                     'alpha': pm.Exponential('alpha', lam=alpha_lam),
-                    'scale': pm.Exponential('scale', lam=scale_lam),
+                    'sigma': pm.Exponential('sigma', lam=sigma_lam),
                 }
             
             # Get random sampling and likelihood for the kind of attempt
