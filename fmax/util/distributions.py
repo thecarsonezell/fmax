@@ -34,19 +34,31 @@ class MaxWeibull(pm.Continuous):
 class Frechet(pm.Continuous):
     def __init__(self, alpha, sigma, *args, **kwargs):
         super(Frechet, self).__init__(*args, **kwargs)
-        self.alpha = pm.math.maximum(1e-10, alpha)
-        self.sigma = pm.math.maximum(1e-10, sigma)
-
+        self.alpha = alpha
+        self.sigma = sigma
 
     def logp(self, value):
         alpha, sigma = self.alpha, self.sigma
         scaled_value = value / sigma
         logp = -((scaled_value ** (-alpha)) + tt.log(alpha) + tt.log(sigma) + (alpha + 1) * tt.log(scaled_value))
+
+        # Debugging: Print values in logp method
+        print("value:", value)
+        print("scaled_value:", scaled_value)
+        print("logp:", logp)
+
         return logp
 
     def logcdf(self, value):
         alpha, sigma = self.alpha, self.sigma
         scaled_value = value / sigma
         logcdf = -scaled_value ** (-alpha)
+
+        # Debugging: Print values in logcdf method
+        print("value:", value)
+        print("scaled_value:", scaled_value)
+        print("logcdf:", logcdf)
+
         return logcdf
+
 
