@@ -134,6 +134,7 @@ class ForecastModel:
         chains=2, 
         draws=20000, 
         tune=5000, 
+        target_accept=0.99,
         ):
         """Fits a PyMC model to the training data.
         """
@@ -143,7 +144,7 @@ class ForecastModel:
                                    chains=chains, 
                                    tune=tune, 
                                    cores=1, 
-                                   target_accept=0.99,
+                                   target_accept=target_accept,
                                    return_inferencedata=True, 
                                    idata_kwargs={"density_dist_obs": False}
                                    )
