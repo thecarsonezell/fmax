@@ -37,15 +37,13 @@ class Frechet(pm.Continuous):
         self.alpha = alpha
         self.sigma = sigma
 
-    def logp(self, value):
-        alpha, sigma = self.alpha, self.sigma
-        scaled_value = value / sigma
-        logp = -((scaled_value ** (-alpha)) + tt.log(alpha) + tt.log(sigma) + (alpha + 1) * tt.log(scaled_value))
+    def logp(self, x):
+        # Add a condition to handle x <= 0
+        x = pm.math.switch(pm.math.gt(x, 0), x, 1e-12)
 
-        # Debugging: Print values in logp method
-
-
-        return logp
+        scaled_x = x / self.scale
+        logp = pm.math.log(self.alpha) - pm.math.log(self.scale) - (self.alpha + 1) * pm.math.log(scaled_x) - (scaled_x ** -self.alpha)
+        return pm.math.switch(pm.math.gt(scaled_x, 0), logp, -np.inf)
 
     def logcdf(self, value):
         alpha, sigma = self.alpha, self.sigma
