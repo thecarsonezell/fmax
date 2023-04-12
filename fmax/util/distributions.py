@@ -41,8 +41,8 @@ class Frechet(pm.Continuous):
         # Add a condition to handle x <= 0
         x = pm.math.switch(pm.math.gt(x, 0), x, 1e-12)
 
-        scaled_x = x / self.scale
-        logp = pm.math.log(self.alpha) - pm.math.log(self.scale) - (self.alpha + 1) * pm.math.log(scaled_x) - (scaled_x ** -self.alpha)
+        scaled_x = x / self.sigma
+        logp = pm.math.log(self.alpha) - pm.math.log(self.sigma) - (self.alpha + 1) * pm.math.log(scaled_x) - (scaled_x ** -self.alpha)
         return pm.math.switch(pm.math.gt(scaled_x, 0), logp, -np.inf)
 
     def logcdf(self, value):
