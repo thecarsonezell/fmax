@@ -78,33 +78,14 @@ class ForecastModel:
         with pm.Model() as self.pymc_model:
 
             # Initialize priors for the distribution of each attempt
-            if self.attempt_distribution != "frechet":
-                attempts_mean_mu = prior_parameters['mu']['mean']
-                attempts_mean_sigma = prior_parameters['mu']['std']
-                attempts_stdev_lam = prior_parameters['sigma']['lam']
+            attempts_mean_mu = prior_parameters['mu']['mean']
+            attempts_mean_sigma = prior_parameters['mu']['std']
+            attempts_stdev_lam = prior_parameters['sigma']['lam']
 
-                priors = {
-                  'mu': pm.Normal('mu', mu=attempts_mean_mu, sigma=attempts_mean_sigma),
-                  'sigma': pm.Exponential('sigma', lam=attempts_stdev_lam),
-                }
-            else:
-                alpha_lower = prior_parameters['alpha']['lower']
-                alpha_upper = prior_parameters['alpha']['upper']
-                scale_mean = prior_parameters['scale']['mean']
-                scale_std = prior_parameters['scale']['std']
-
-                # Log-transform reparameterization
-                log_alpha = pm.Uniform('log_alpha', lower=np.log(alpha_lower), upper=np.log(alpha_upper))
-                log_scale = pm.Normal('log_scale', mu=scale_mean, sigma=scale_std)
-
-                alpha = pm.Deterministic('alpha', pm.math.exp(log_alpha))
-                scale = pm.Deterministic('scale', pm.math.exp(log_scale))
-
-                priors = {
-                    'alpha': alpha,
-                    'scale': scale,
-                }
-
+            priors = {
+              'mu': pm.Normal('mu', mu=attempts_mean_mu, sigma=attempts_mean_sigma),
+              'sigma': pm.Exponential('sigma', lam=attempts_stdev_lam),
+            }
             # Get random sampling and likelihood for the kind of attempt
             loglike = fm.get_loglikelihood_fn(
                           attempts=self.attempt_distribution,
