@@ -43,8 +43,17 @@ def get_loglikelihood_fn(
         def _logp(jump_data, flat_data, alpha, sigma):
             x_dist = generic_x_dist(alpha=alpha, sigma=sigma)
 
+            # Debugging: Print values to identify the issue
+            print("jump_data:", jump_data)
+            print("flat_data:", flat_data)
+            print("alpha:", alpha)
+            print("sigma:", sigma)
+
             # Add likelihood contribution from the jump data
             log_likelihood = pm.math.sum(x_dist.logp(jump_data))
+
+            # Debugging: Print log_likelihood after jump_data
+            print("log_likelihood after jump_data:", log_likelihood)
 
             # Add likelihood contribution from the flat data
             if kind == "max":
