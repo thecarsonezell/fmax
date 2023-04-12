@@ -1,6 +1,7 @@
 import pymc3 as pm
 import numpy as np
 import theano.tensor as tt
+from theano import function
 
 
 class MinGumbel(pm.Continuous):
@@ -43,9 +44,12 @@ class Frechet(pm.Continuous):
         logp = -((scaled_value ** (-alpha)) + tt.log(alpha) + tt.log(sigma) + (alpha + 1) * tt.log(scaled_value))
 
         # Debugging: Print values in logp method
-        print("value:", value)
-        print("scaled_value:", scaled_value)
-        print("logp:", logp)
+        f_value = function([], value)
+        f_scaled_value = function([], scaled_value)
+        f_logp = function([], logp)
+        print("value:", f_value())
+        print("scaled_value:", f_scaled_value())
+        print("logp:", f_logp())
 
         return logp
 
@@ -55,9 +59,12 @@ class Frechet(pm.Continuous):
         logcdf = -scaled_value ** (-alpha)
 
         # Debugging: Print values in logcdf method
-        print("value:", value)
-        print("scaled_value:", scaled_value)
-        print("logcdf:", logcdf)
+        f_value = function([], value)
+        f_scaled_value = function([], scaled_value)
+        f_logcdf = function([], logcdf)
+        print("value:", f_value())
+        print("scaled_value:", f_scaled_value())
+        print("logcdf:", f_logcdf())
 
         return logcdf
 
