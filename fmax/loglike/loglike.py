@@ -38,7 +38,7 @@ def get_loglikelihood_fn(
         
     elif attempts == "frechet":
 
-        generic_x_dist = Frechet
+        generic_x_dist = Frechet.dist
 
         def _logp(jump_data, flat_data, alpha, sigma):
             x_dist = generic_x_dist(alpha=alpha, sigma=sigma)
