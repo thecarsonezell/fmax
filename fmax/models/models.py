@@ -92,12 +92,10 @@ class ForecastModel:
                 alpha_upper = prior_parameters['alpha']['upper']
                 sigma_mean = prior_parameters['sigma']['mean']
                 sigma_std = prior_parameters['sigma']['std']
-
-                # Log-transform reparameterization
                 
                 priors = {
-                    alpha = pm.Uniform('alpha', lower=alpha_lower, upper=alpha_upper),
-                    sigma = pm.Normal('sigma', mu=sigma_mean, sigma=sigma_std),
+                    'alpha' = pm.Uniform('alpha', lower=alpha_lower, upper=alpha_upper),
+                    'sigma' = pm.Normal('sigma', mu=sigma_mean, sigma=sigma_std),
                
                 }
             
