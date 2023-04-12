@@ -112,6 +112,13 @@ class ForecastModel:
                                  n_periods=self.fcast_len,
                                  past_obs=self.train_data,
                                  )
+            
+            print("Initial parameter values:")
+            print(self.pymc_model.test_point)
+
+            print("Log-probability of initial parameter values:")
+            print(self.pymc_model.check_test_point())
+
 
             likelihood = pm.DensityDist('path',
                                         loglike, random=posterior_predictive_sampler,
