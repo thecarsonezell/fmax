@@ -77,15 +77,24 @@ class ForecastModel:
         # Define model
         with pm.Model() as self.pymc_model:
 
-            # Initialize priors for the distribution of each attempt
-            attempts_mean_mu = prior_parameters['mu']['mean']
-            attempts_mean_sigma = prior_parameters['mu']['std']
-            attempts_stdev_lam = prior_parameters['sigma']['lam']
+            if self.attempt_distribution != "frechet":
+                attempts_mean_mu = prior_parameters['mu']['mean']
+                attempts_mean_sigma = prior_parameters['mu']['std']
+                attempts_stdev_lam = prior_parameters['sigma']['lam']
 
-            priors = {
-              'mu': pm.Normal('mu', mu=attempts_mean_mu, sigma=attempts_mean_sigma),
-              'sigma': pm.Exponential('sigma', lam=attempts_stdev_lam),
-            }
+                priors = {
+                  'mu': pm.Normal('mu', mu=attempts_mean_mu, sigma=attempts_mean_sigma),
+                  'sigma': pm.Exponential('sigma', lam=attempts_stdev_lam),
+                }
+            else:
+                alpha_lam = prior_parameters['alpha']['lam']
+                scale_lam = prior_parameters['sigma']['lam']
+
+                priors = {
+                    'alpha': pm.Exponential('alpha', lam=alpha_lam),
+                    'scale': pm.Exponential('scale', lam=scale_lam),
+                }
+            
             # Get random sampling and likelihood for the kind of attempt
             loglike = fm.get_loglikelihood_fn(
                           attempts=self.attempt_distribution,
