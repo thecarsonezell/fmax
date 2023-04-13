@@ -88,16 +88,14 @@ class ForecastModel:
                   'sigma': pm.Exponential('sigma', lam=attempts_stdev_lam),
                 }
             else:
-                alpha_lower = prior_parameters['alpha']['lower']
-                alpha_upper = prior_parameters['alpha']['upper']
-                scale_mean = prior_parameters['scale']['mean']
-                scale_std = prior_parameters['scale']['std']
-                scale_nu = prior_parameters['scale']['nu']
+                alpha_mu = prior_parameters['alpha']['mu']
+                alpha_sigma = prior_parameters['alpha']['sigma']
+                scale_lam = prior_parameters['scale']['lam']
                 
 
                 priors = {
-                    'alpha': pm.Uniform('alpha', lower=alpha_lower, upper=alpha_upper),
-                    'scale': pm.StudentT('scale', mu=scale_mean, sigma=scale_std, nu=scale_nu),
+                    'alpha': pm.Normal('mu', mu=alpha_mu, sigma=alpha_sigma),
+                    'scale': pm.Exponential('scale', lam=scale_lam),
                 }
 
             # Get random sampling and likelihood for the kind of attempt
