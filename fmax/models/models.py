@@ -95,8 +95,8 @@ class ForecastModel:
                 
 
                 priors = {
-                    'alpha': pm.Uniform('alpha', alpha=alpha_lower, beta=alpha_upper),
-                    'scale': pm.Uniform('scale', alpha=scale_lower, beta=scale_upper),
+                    'alpha': pm.Uniform('alpha', lower=alpha_lower, upper=alpha_upper),
+                    'scale': pm.Uniform('scale', lower=scale_lower, upper=scale_upper),
                 }
                 
 
