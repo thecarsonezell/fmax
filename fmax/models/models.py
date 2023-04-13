@@ -99,9 +99,6 @@ class ForecastModel:
                     'scale': pm.Gamma('scale', alpha=scale_shape, beta=scale_rate),
                 }
                 
-                
-                
-    beta = 
 
             # Get random sampling and likelihood for the kind of attempt
             loglike = fm.get_loglikelihood_fn(
