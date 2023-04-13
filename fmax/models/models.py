@@ -88,15 +88,15 @@ class ForecastModel:
                   'sigma': pm.Exponential('sigma', lam=attempts_stdev_lam),
                 }
             else:
-                alpha_shape = prior_parameters['alpha']['shape']
-                alpha_rate = prior_parameters['alpha']['rate']
-                scale_shape = prior_parameters['scale']['shape']
-                scale_rate = prior_parameters['scale']['rate']
+                alpha_lower = prior_parameters['alpha']['lower']
+                alpha_upper = prior_parameters['alpha']['upper']
+                scale_lower = prior_parameters['scale']['lower']
+                scale_upper = prior_parameters['scale']['upper']
                 
 
                 priors = {
-                    'alpha': pm.Gamma('alpha', alpha=alpha_shape, beta=alpha_rate),
-                    'scale': pm.Gamma('scale', alpha=scale_shape, beta=scale_rate),
+                    'alpha': pm.Uniform('alpha', alpha=alpha_lower, beta=alpha_upper),
+                    'scale': pm.Uniform('scale', alpha=scale_lower, beta=scale_upper),
                 }
                 
 
