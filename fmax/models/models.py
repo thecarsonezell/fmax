@@ -88,15 +88,20 @@ class ForecastModel:
                   'sigma': pm.Exponential('sigma', lam=attempts_stdev_lam),
                 }
             else:
-                alpha_mu = prior_parameters['alpha']['mu']
-                alpha_sigma = prior_parameters['alpha']['sigma']
-                scale_lam = prior_parameters['scale']['lam']
+                alpha_shape = prior_parameters['alpha']['shape']
+                alpha_rate = prior_parameters['alpha']['rate']
+                scale_shape = prior_parameters['scale']['shape']
+                scale_rate = prior_parameters['scale']['rate']
                 
 
                 priors = {
-                    'alpha': pm.Normal('mu', mu=alpha_mu, sigma=alpha_sigma),
-                    'scale': pm.Exponential('scale', lam=scale_lam),
+                    'alpha': pm.Gamma('alpha', alpha=alpha_shape, beta=alpha_rate),
+                    'scale': pm.Gamma('scale', alpha=scale_shape, beta=scale_rate),
                 }
+                
+                
+                
+    beta = 
 
             # Get random sampling and likelihood for the kind of attempt
             loglike = fm.get_loglikelihood_fn(
